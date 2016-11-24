@@ -3,9 +3,14 @@ banking statements multitool - parse and work with files multiple statement type
 
 Usage:
   statements list-parsers
-  statements [check | merge | search] <path> ... [--parser=<parser>] ...
+  statements (check | merge) <path> ... [--parser=<parser>] ...
+  statements search <query> <path> ... [--parser=<parser>] ...
   statements -h | --help
   statements --version
+
+To search, use a "field check value" syntax query, where check is either '=' or 'has',
+and field is one of id, date, memo, amount, date_user, payee, check_no, refnum trntype,
+or bank_account_to. Value is the value you're looking for.
 
 Options:
   -h --help     Show this screen.
@@ -19,14 +24,14 @@ from docopt import docopt
 from ofxstatement.plugin import list_plugins
 from ofxstatement import ui, configuration
 
-from .util import files_in_dirs
+from .util import files_in_dirs, parsed_statements
 
 #from iso3166 import countries
 #from dateutil import parser as dateparser
 
-CHECK = 0
-MERGE = 1
-SEARCH = 2
+CHECK = "check"
+MERGE = "merge"
+SEARCH = "search"
 
 
 def statements():
@@ -36,7 +41,7 @@ def statements():
    if args["list-parsers"]:
       sys.exit("available parsers: %s" % ', '.join([n for (n,p) in list_plugins()]))
 
-   out = ["Trying to " ]
+   out = ["\nTrying to " ]
 
    # command to perform
 
@@ -86,15 +91,33 @@ def statements():
    print(''.join(out))
 
    files.extend(files_in_dirs(dirs))
-   print("Found following files:\n - " + "\n - ".join(files))
+   print("\nFound following files to " + command + ":\n\n - " + "\n - ".join(files))
 
    plugin_map = dict(list_plugins())
+
    if command == CHECK:
-      for fn in files:
-         for pname in plugins:
-            plugin = plugin_map[pname](ui.UI(), {"account":000, "currency":"€"})
-            parser = plugin.get_parser(fn)
-            statement = parser.parse()
-            #for line in statement.lines:
-            #   print(line)
+      for s in parsed_statements(files, plugins):
+         pass
       sys.exit("all files parsed ok")
+
+   elif command == SEARCH:
+      field, op, value = args["<query>"].split()
+      field = field.lower()
+      value = value.lower()
+      op = op.lower()
+
+      matches = False
+
+      for s in parsed_statements(files, plugins):
+         for l in s.lines:
+            data = getattr(l, field).lower()
+            if op.strip() == "has" and value in data:
+               print(l)
+               matches = True
+            elif op.strip() == "=" and value == data:
+               print(l)
+               matches = True
+            else:
+               pass
+      if not matches:
+         print("\nNo search matches.\n")
