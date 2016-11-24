@@ -14,7 +14,7 @@ history = open('HISTORY.rst').read().replace('.. :changelog:', '')
 
 setup(
     name='banking.statements',
-    version='0.1.0',
+    version='0.2.0',
     description='Tool to parse and work with multiple banking statement files',
     long_description=readme + '\n\n' + history,
     author='Petri Savolainen',
@@ -36,7 +36,8 @@ setup(
     zip_safe=False,
     keywords='banking,ofx,ofxstatement',
     classifiers=[
-        'Development Status :: 2 - Pre-Alpha',
+        'Development Status :: 3 - Alpha',
+        'Intended Audience :: End Users/Desktop',
         'Intended Audience :: Developers',
         'License :: OSI Approved :: BSD License',
         'Natural Language :: English',
