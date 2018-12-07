@@ -25,6 +25,10 @@ used with for example both 'banking.statements' and 'banking.statements.osuuspan
 Features
 --------
 
-* check statement files
+* check statement files such as those parsed by:
+ - banking.statements.osuuspankki
+ - banking.statements.nordea
+ - banking.statements.spankki
+ 
 * merge them
 * search them
