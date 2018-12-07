@@ -26,9 +26,9 @@ Features
 --------
 
 * check statement files such as those parsed by:
- - banking.statements.osuuspankki
- - banking.statements.nordea
- - banking.statements.spankki
+  - banking.statements.osuuspankki
+  - banking.statements.nordea
+  - banking.statements.spankki
  
 * merge them
 * search them
